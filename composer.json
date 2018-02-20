@@ -1,0 +1,23 @@
+{
+    "name": "artarn/page_view",
+    "description": "Web Developer Candidate PHP Test",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "artarn",
+            "email": "artarn@yandex.ru"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "files": [
+            "app/helpers.php"
+        ],
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+
+    "require": {}
+}
