@@ -8,7 +8,10 @@ use App\Core\Controller\ControllerResolver;
 
 return [
     ResponseFactory::class    => function (Container $container) {
-        return new ResponseFactory();
+        return new ResponseFactory(
+            $container->resolve('configs')->getConfig('app')['template_dir'],
+            $container->resolve('page_not_found_view')
+        );
     },
     RouteFactory::class       => function (Container $container) {
         $routes = $container->resolve('configs')->getConfig('routes');
@@ -25,6 +28,7 @@ return [
         $config = $container->resolve('configs')->getConfig('database');
 
         return new Database($config['host'], $config['database'], $config['user'], $config['password'], $config['charset']);
-    }
+    },
+    'page_not_found_view'     => new \App\Core\View('404')
 
 ];

@@ -24,7 +24,10 @@ class Filesystem
 
     public function detectMimeType(string $file)
     {
-        $type = array_pop(explode('.', $file));
+
+        $type = explode('.', $file);
+
+        $type = @array_pop($type);
 
         return $this->mimeTypes[$type] ?? mime_content_type($file);
     }

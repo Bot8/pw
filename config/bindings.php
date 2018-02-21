@@ -17,7 +17,7 @@ return [
     C\PageController::class => function (Container $container) {
         return new C\PageController($container->resolve(R\PageRepository::class));
     },
-    S\Filesystem::class => function (Container $container) {
+    S\Filesystem::class     => function (Container $container) {
         return new S\Filesystem($container->resolve('configs')->getConfig('app')['storage_dir']);
     }
 ];

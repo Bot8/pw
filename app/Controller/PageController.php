@@ -8,6 +8,7 @@
 
 namespace App\Controller;
 
+use App\View\PageView;
 use App\Repository\PageRepository;
 use App\Core\Controller\AbstractController;
 
@@ -30,7 +31,11 @@ class PageController extends AbstractController
     {
         $model = $this->repository->getByFileName($file);
 
-        return $this->responseFactory->success("file {$file} " . var_export($model, true));
+        if (is_null($model)) {
+            return $this->responseFactory->notFound();
+        }
+
+        return $this->responseFactory->success(new PageView('page', $model));
     }
 
     public function readPage(string $page)
@@ -41,6 +46,6 @@ class PageController extends AbstractController
             return $this->responseFactory->notFound();
         }
 
-        return $this->responseFactory->success(var_export($model, true));
+        return $this->responseFactory->success(new PageView('page', $model));
     }
 }
