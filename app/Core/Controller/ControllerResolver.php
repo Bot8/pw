@@ -10,71 +10,61 @@ namespace App\Core\Controller;
 
 use App\Core\Http\Request;
 use App\Core\Routing\Route;
+use App\Core\Container\Container;
 use App\Core\Http\ResponseFactory;
+use App\Core\Routing\RouteFactory;
 use App\Core\Interfaces\ControllerResolverInterface;
 
 class ControllerResolver implements ControllerResolverInterface
 {
-    protected $routes = [];
+    /** @var RouteFactory */
+    protected $routeFactory;
+
+    /** @var ResponseFactory */
+    protected $responseFactory;
+
+    /** @var Container */
+    protected $container;
 
     /**
-     * @param array $definedRoutes
-     * @return $this
+     * ControllerResolver constructor.
+     *
+     * @param RouteFactory    $routeFactory
+     * @param ResponseFactory $responseFactory
+     * @param Container       $container
      */
-    public function setRoutes(array $definedRoutes)
-    {
-        foreach ($definedRoutes as $route => $params) {
-            $this->parseRoute($route, $params);
-        }
-
-        return $this;
+    public function __construct(
+        RouteFactory $routeFactory,
+        ResponseFactory $responseFactory,
+        Container $container
+    ) {
+        $this->container = $container;
+        $this->routeFactory = $routeFactory;
+        $this->responseFactory = $responseFactory;
     }
 
     public function resolve(Request $request)
     {
-        if (!isset($this->routes[$request->getMethod()])) {
-            return ResponseFactory::notFound();
+        if ($route = $this->routeFactory->resolveRoute($request)) {
+            return $this->process($route, $request);
         }
 
-        foreach ($this->routes[$request->getMethod()] as $route) {
-            /** @var $route Route */
-            if ($matches = $route->match($request->getUri())) {
-                return $this->process($route, $request, $matches);
-            }
-        }
-
-        return ResponseFactory::notFound();
+        return $this->responseFactory->notFound();
     }
 
-    protected function parseRoute($route, $params)
-    {
-        list($requestMethod, $pattern) = explode(' ', $route);
-
-        if (is_array($params['arguments'])) {
-            foreach ($params['arguments'] as $key => $regex) {
-                $pattern = str_replace("{{$key}}", "(?P<{$key}>{$regex})", $pattern);
-            }
-        }
-
-        $pattern = "/^\\" . $pattern . "(\?.*)?$/";
-
-        if (!isset($this->routes[$requestMethod])) {
-            $this->routes[$requestMethod] = [];
-        }
-
-        $this->routes[$requestMethod][] = new Route(
-            $pattern,
-            $params['controller'],
-            $params['method']
-        );
-    }
-
-    protected function process(Route $route, Request $request, array $matches)
+    protected function process(Route $route, Request $request)
     {
         $controller = $route->getController();
 
-        $controller = (new $controller())->setRequest($request);
+        if ($this->container->hasBind($controller)) {
+            $controller = $this->container->resolve($controller);
+        } else {
+            $controller = (new $controller());
+        }
 
-        return call_user_func_array([$controller, $route->getMethod()], $matches);
+        /** @var $controller AbstractController */
+        $controller->setRequest($request);
+
+        return call_user_func_array([$controller, $route->getMethod()], $route->getMatches());
     }
 }

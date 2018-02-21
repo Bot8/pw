@@ -12,6 +12,7 @@ use App\Core\Debug;
 use App\Core\Http\Request;
 use App\Core\Http\Response;
 use App\Core\ConfigRepository;
+use App\Core\Container\Container;
 use App\Core\Controller\ControllerResolver;
 
 class Bootstrap
@@ -30,20 +31,21 @@ class Bootstrap
     /** @var ConfigRepository */
     protected $configs;
 
+    /** @var Container */
+    protected $container;
+
     /**
      * Bootstrap constructor.
      */
     public function __construct()
     {
-        $this->configs = new ConfigRepository(__DIR__ . '/../config/');
-
-        $this->request = new Request($_SERVER);
-        
-        $this->controllerResolver =
-            (new ControllerResolver())
-                ->setRoutes($this->configs->getConfig('routes'));
-
         Debug::init();
+
+        $this->initContainer()
+             ->initConfigs()
+             ->extendContainerBinding()
+             ->initRequest()
+             ->initControllerResolver();
     }
 
     /**
@@ -59,11 +61,11 @@ class Bootstrap
     }
 
     /**
-     * @return ConfigRepository
+     * @return Container
      */
-    public function getConfigs(): ConfigRepository
+    public function getContainer(): Container
     {
-        return $this->configs;
+        return $this->container;
     }
 
     public function run()
@@ -73,5 +75,46 @@ class Bootstrap
         ob_clean();
 
         $response->render();
+    }
+
+    protected function initContainer()
+    {
+        $this->container = new Container();
+
+        return $this;
+    }
+
+    protected function extendContainerBinding()
+    {
+        foreach ($this->configs->getConfig('bindings') as $abstract => $binding) {
+            $this->container->bind($abstract, $binding);
+        }
+
+        return $this;
+    }
+
+    protected function initConfigs()
+    {
+        $this->configs = new ConfigRepository(__DIR__ . '/../config/');
+
+        $this->container->bind('configs', $this->configs);
+
+        return $this;
+    }
+
+    protected function initRequest()
+    {
+        $this->request = new Request($_SERVER);
+
+        $this->container->bind(Request::class, $this->request);
+
+        return $this;
+    }
+
+    protected function initControllerResolver()
+    {
+        $this->controllerResolver = $this->container->resolve(ControllerResolver::class);
+
+        return $this;
     }
 }

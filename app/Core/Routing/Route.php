@@ -17,8 +17,11 @@ class Route
 
     protected $method;
 
+    protected $matches = [];
+
     /**
      * Route constructor.
+     *
      * @param $pattern
      * @param $controller
      * @param $method
@@ -32,6 +35,7 @@ class Route
 
     /**
      * @param string $uri
+     *
      * @return array|null
      */
     public function match(string $uri)
@@ -60,5 +64,31 @@ class Route
         return $this->method;
     }
 
+    /**
+     * @param array $matches
+     *
+     * @return Route
+     */
+    public function setMatches(array $matches)
+    {
+        $this->matches = $matches;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMatches(): array
+    {
+        return $this->matches;
+    }
+
+    public function withMatches(array $matches)
+    {
+        $route = (clone $this)->setMatches($matches);
+
+        return $route;
+    }
 
 }
