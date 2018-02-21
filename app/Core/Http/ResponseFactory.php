@@ -10,17 +10,18 @@ namespace App\Core\Http;
 
 class ResponseFactory
 {
-    protected static function makeResponse()
+    protected function makeResponse()
     {
         return new Response();
     }
 
-    public static function success(string $content, string $contentType = null)
+    public function success(string $content, string $contentType = null)
     {
-        $response = self::makeResponse()
-            ->setResponseCode(Response::HTTP_OK_CODE)
-            ->setContent($content)
-            ->setResponseStatus(Response::HTTP_OK_STATUS);
+        $response =
+            $this->makeResponse()
+                 ->setResponseCode(Response::HTTP_OK_CODE)
+                 ->setContent($content)
+                 ->setResponseStatus(Response::HTTP_OK_STATUS);
 
         if ($contentType) {
             $response->setContentType($contentType);
@@ -29,10 +30,11 @@ class ResponseFactory
         return $response;
     }
 
-    public static function notFound()
+    public function notFound()
     {
-        return self::makeResponse()
-            ->setResponseCode(Response::HTTP_NOT_FOUND_CODE)
-            ->setResponseStatus(Response::HTTP_NOT_FOUND_STATUS);
+        return
+            $this->makeResponse()
+                 ->setResponseCode(Response::HTTP_NOT_FOUND_CODE)
+                 ->setResponseStatus(Response::HTTP_NOT_FOUND_STATUS);
     }
 }

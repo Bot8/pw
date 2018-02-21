@@ -8,20 +8,39 @@
 
 namespace App\Controller;
 
-use App\Core\Http\ResponseFactory;
+use App\Repository\PageRepository;
 use App\Core\Controller\AbstractController;
 
 class PageController extends AbstractController
 {
+    /** @var PageRepository */
+    protected $repository;
+
+    /**
+     * PageController constructor.
+     *
+     * @param PageRepository $repository
+     */
+    public function __construct(PageRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     public function readFile(string $file)
     {
-        return ResponseFactory::success("file {$file}");
+        $model = $this->repository->getByFileName($file);
+
+        return $this->responseFactory->success("file {$file} " . var_export($model, true));
     }
 
     public function readPage(string $page)
     {
-        return ResponseFactory::success("page {$page}");
+        $model = $this->repository->getByLink($page);
+
+        if (is_null($model)) {
+            return $this->responseFactory->notFound();
+        }
+
+        return $this->responseFactory->success(var_export($model, true));
     }
-
-
 }

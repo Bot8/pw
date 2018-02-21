@@ -9,13 +9,19 @@
 namespace App\Core\Controller;
 
 use App\Core\Http\Request;
+use App\Core\Http\ResponseFactory;
 
 class AbstractController
 {
+    /** @var Request */
     protected $request;
+
+    /** @var ResponseFactory */
+    protected $responseFactory;
 
     /**
      * @param Request $request
+     *
      * @return AbstractController
      */
     public function setRequest(Request $request)
@@ -24,4 +30,13 @@ class AbstractController
 
         return $this;
     }
+
+    /**
+     * @param ResponseFactory $responseFactory
+     */
+    public function setResponseFactory(ResponseFactory $responseFactory)
+    {
+        $this->responseFactory = $responseFactory;
+    }
+
 }

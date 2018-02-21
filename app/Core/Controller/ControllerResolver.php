@@ -63,7 +63,9 @@ class ControllerResolver implements ControllerResolverInterface
         }
 
         /** @var $controller AbstractController */
-        $controller->setRequest($request);
+        $controller
+            ->setRequest($request)
+            ->setResponseFactory($this->responseFactory);
 
         return call_user_func_array([$controller, $route->getMethod()], $route->getMatches());
     }

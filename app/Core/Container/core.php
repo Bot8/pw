@@ -1,5 +1,6 @@
 <?php
 
+use App\Core\Storage\Database;
 use App\Core\Container\Container;
 use App\Core\Routing\RouteFactory;
 use App\Core\Http\ResponseFactory;
@@ -19,6 +20,11 @@ return [
         $responseFactory = $container->resolve(ResponseFactory::class);
 
         return new ControllerResolver($routeFactory, $responseFactory, $container);
+    },
+    Database::class           => function (Container $container) {
+        $config = $container->resolve('configs')->getConfig('database');
+
+        return new Database($config['host'], $config['database'], $config['user'], $config['password'], $config['charset']);
     }
 
 ];

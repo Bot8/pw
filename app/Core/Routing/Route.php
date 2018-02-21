@@ -45,6 +45,8 @@ class Route
             return null;
         }
 
+        unset($matches[0]);
+
         return $matches;
     }
 
