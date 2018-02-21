@@ -4,6 +4,7 @@ namespace App\View;
 
 use App\Core\View;
 use App\Model\Page;
+use App\Core\Helpers\TextContentConverter;
 
 class PageView extends View
 {
@@ -16,7 +17,7 @@ class PageView extends View
         $content = $page->getText();
 
         if (self::CONVERTIBLE_MIME_TYPE === $page->getMime()) {
-//            $content
+            $content = TextContentConverter::convert($page->getText());
         }
 
         $this->assign('title', $page->getTitle())

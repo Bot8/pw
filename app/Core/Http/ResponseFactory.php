@@ -8,6 +8,7 @@
 
 namespace App\Core\Http;
 
+use App\Core\Helpers\Debug;
 use App\Core\View;
 
 class ResponseFactory
@@ -35,7 +36,8 @@ class ResponseFactory
 
     protected function prepareView(View $view)
     {
-        $view->setViewDir($this->viewDir);
+        $view->setViewDir($this->viewDir)
+             ->assign('time', Debug::elapsed());
 
         return $view;
     }

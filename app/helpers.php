@@ -10,9 +10,9 @@ if (!function_exists('dd')) {
     function dd()
     {
         foreach (func_get_args() as $arg) {
-            \App\Core\Debug::dump($arg);
+            \App\Core\Helpers\Debug::dump($arg);
         }
-        
+
         die();
     }
 }

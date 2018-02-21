@@ -8,7 +8,6 @@
 
 namespace App;
 
-use App\Core\Debug;
 use App\Core\Http\Request;
 use App\Core\Http\Response;
 use App\Core\ConfigRepository;
@@ -39,7 +38,6 @@ class Bootstrap
      */
     public function __construct()
     {
-        Debug::init();
 
         $this->initContainer()
              ->initConfigs()

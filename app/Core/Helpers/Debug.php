@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core;
+namespace App\Core\Helpers;
 
 class Debug
 {
@@ -14,7 +14,7 @@ class Debug
     /**
      * @return int
      */
-    public function elapsed()
+    public static function elapsed()
     {
         return microtime() - self::$startTime;
     }
