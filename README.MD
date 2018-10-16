@@ -25,14 +25,18 @@ Specifications
 All plain text documents must be converted to HTML using the
 following rules:
 
-X1.  Convert all URLs and emails into valid HTML links.
-X2.  Convert all text lines followed one by one and surrounded with
+1.  Convert all URLs and emails into valid HTML links.
+
+2.  Convert all text lines followed one by one and surrounded with
     empty lines into an HTML paragraph.
-X3.  Convert all paragraphs that end with a line filled by - (dash)
+    
+3.  Convert all paragraphs that end with a line filled by - (dash)
     or = (equation) into HTML header of first level.
-X4.  Convert all paragraphs that start from two or more number signs
+    
+4.  Convert all paragraphs that start from two or more number signs
     into HTML headers of 2nd and other levels, depending on number of
     number signs.
+    
 5.  Convert all paragraphs that start from asterisk into unordered
     list item. A few such paragraphs must be converted into a single
     unordered list with several list items.
